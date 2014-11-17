@@ -1,132 +1,14 @@
 <html>
-<head>
-    <title>is awake?</title>
-    <style>
-html,
-body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    overflow: hidden;
-}
-#answer {
-    margin: auto;
-    height: 40px;
-    width: 280px;
-    text-align: center;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    font-size: 34px;
-    z-index: 2;
-}
-#sky {
-    width: 100%;
-    height: 900%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    overflow: hidden;
-    background-image: -webkit-linear-gradient(top, rgba(30, 152, 209, 1) 0%, rgb(202, 229, 243) 11%, rgba(125, 185, 232, 0.82) 22%, rgb(240, 231, 26) 33%, rgb(245, 86, 12) 44%, rgba(197, 127, 81, 0.82) 55%, rgba(5, 5, 5, 1) 66%, rgb(54, 55, 56) 77%, rgb(3, 3, 3) 100%);
-    background-image: -moz-linear-gradient(top, rgba(30, 152, 209, 1) 0%, rgb(202, 229, 243) 11%, rgba(125, 185, 232, 0.82) 22%, rgb(240, 231, 26) 33%, rgb(245, 86, 12) 44%, rgba(197, 127, 81, 0.82) 55%, rgba(5, 5, 5, 1) 66%, rgb(54, 55, 56) 77%, rgb(3, 3, 3) 100%);
-}
-.add_yourself {
-    color: #fff;
-}
-@media (min-width: 768px) {
-    #answer {
-        width: 700px;
-        font-size: 68px;
-    }
-}
-    </style>
-</head>
+    <head>
+        <title>is awake?</title>
+        <link href="resources/style.css" />
+    </head>
 
-<body>
-    <div id="answer"></div>
-    <div id="sky"></div>
+    <body>
+        <div id="answer"></div>
+        <div id="sky"></div>
 
-    <script src="http://momentjs.com/downloads/moment.js"></script>
-    <script type="text/javascript">
-/*jslint browser:true */
-/*global moment */
-
-function fetchJSONFile(path, success, failure) {
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4) {
-            if (httpRequest.status === 200) {
-                var data = JSON.parse(httpRequest.responseText);
-                if (success) success(data);
-            } else
-            if (httpRequest.status === 404) {
-                if (failure) failure("Not found");
-            }
-        }
-    };
-    httpRequest.open('GET', path);
-    httpRequest.send();
-}
-
-function isInTimeInterval(time, from, to) {
-    if (from < to) {
-       return from <= time && time < to;
-    } else { // means it is awake past midnight
-        return (from <= time && time < 24) || (0 <= time && time < to);
-    }
-}
-
-function isAwake() {
-    'use strict';
-    var positions = [
-            800, 800, 800, 800,
-            800, 550, 450, 220,
-            0, 0, 0, 0,
-            0, 100, 100, 100,
-            150, 150, 250, 300,
-            400, 450, 550, 750
-        ],
-        colors = [
-            "#ecf0f1", "#ecf0f1", "#ecf0f1", "#ecf0f1",
-            "#ecf0f1", "#ecf0f1", "#ecf0f1", "#000000",
-            "#000000", "#000000", "#000000", "#000000",
-            "#000000", "#000000", "#000000", "#000000",
-            "#000000", "#000000", "#000000", "#000000",
-            "#000000", "#000000", "#ecf0f1", "#ecf0f1"
-        ],
-        person = location.hostname.split(".")[0],
-        local = moment().zone(0)
-
-    if (!person || person == "isawake") {
-        document.getElementById("answer").innerHTML = "<a class='add_yourself' href='https://github.com/nicola/isawake#add-yourself'>Add yourself</a>"
-        return
-    }
-
-    fetchJSONFile(
-        "http://"+person+".isawake.me/people/"+person+".json",
-        function(obj) {
-            if (!obj) {
-                return;
-            }
-            var personOffset = (obj || {}).offset*60,
-                personRange = (obj || {}).range,
-                remote = local.add(personOffset, 'm'),
-                hours = +remote.format("H"),
-                answer = isInTimeInterval(hours, personRange[0], personRange[1]) ? "Yes" : "No",
-                answerElement = document.getElementById("answer"),
-                skyElement = document.getElementById("sky");
-
-            answerElement.innerHTML = answer + " it's " + remote.format('HH:mm');
-            skyElement.style.top = "-" + positions[hours] + "%";
-            answerElement.style.color = colors[hours];
-        })
-
-}
-isAwake();
-    </script>
-</body>
+        <script src="http://momentjs.com/downloads/moment.js"></script>
+        <script src="/resources/core.js" type="text/javascript"></script>
+    </body>
 </html>
